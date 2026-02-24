@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState } from 'react';
 import { Send, CheckCircle, Mail, Loader2 } from 'lucide-react';
 
@@ -26,7 +26,15 @@ const WaitingListSection: React.FC<WaitingListSectionProps> = ({ id, onJoin }) =
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      const data = await res.json();
+
+      const text = await res.text();
+      let data;
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        throw new Error('Server error. Please try again.');
+      }
+
       if (!res.ok) throw new Error(data.error || 'Eroare. Încearcă din nou.');
       setStep('verify');
     } catch (err) {
@@ -48,7 +56,15 @@ const WaitingListSection: React.FC<WaitingListSectionProps> = ({ id, onJoin }) =
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }),
       });
-      const data = await res.json();
+
+      const text = await res.text();
+      let data;
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        throw new Error('Server error. Please try again.');
+      }
+
       if (!res.ok) throw new Error(data.error || 'Cod incorect. Încearcă din nou.');
 
       setStep('success');
